@@ -64,6 +64,15 @@ const coords = {
 		},
 		equip: {
 			cube: rect( px(602,89), px(652,139) ),
+			weap: rect( px(552,89), px(602,139) ),
+			head: rect( px(502,39), px(552,89) ),
+			chest: rect( px(502,89), px(552,139) ),
+			legs: rect( px(502,139), px(552,189) ),
+			shoes: rect( px(502,189), px(552,239) ),
+			acc1: rect( px(452,39), px(502,89) ),
+			acc2: rect( px(452,89), px(502,139) ),
+			acc3: rect( px(452,139), px(502,189) ),
+			acc4: rect( px(452,189), px(502,239) ),
 		},
 	}
 };
