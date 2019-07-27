@@ -63,6 +63,19 @@ class InvLogic extends FeatureLogic {
 		mouse.move( coords.inv.equip.cube.center );
 		mouse.click( 2 );
 	}
+
+	applyBoostToSlot( slot ) {
+		const {mouse} = nguJs.io;
+		mouse.move( coords.inv.slot(slot % 12, Math.floor(slot / 12)).center );
+		nguJs.io.keyboard.press( Keyboard.keys.a );
+	}
+
+	applyBoostToEquip( slot ) {
+		const {mouse} = nguJs.io;
+		var eq = coords.inv.equip[slot];
+		mouse.move( eq.center );
+		nguJs.io.keyboard.press( Keyboard.keys.a );
+	}
 }
 
 
