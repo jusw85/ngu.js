@@ -75,6 +75,20 @@ class LoopRunner {
 		const {logic, io} = nguJs;
 
 		return {
+			applyBoosts: this.mkRule( `apply boosts`, async function(slots, timeout=10000, delay=500) {
+				for (const slot of slots) {
+					if (slot === "cube") {
+						logic.inv.applyAllBoostsToCube();
+					} else if (typeof slot === "number") {
+						logic.inv.applyBoostToSlot(slot)
+					} else {
+						logic.inv.applyBoostToEquip(slot)
+					}
+					await new Promise(resolve => setTimeout(resolve, delay));
+				}
+				await new Promise(resolve => setTimeout(resolve, timeout));
+			}),
+
 			fixInv: this.mkRule( `fix inventory`, async function() {
 				logic.inv.goTo();
 				logic.inv.applyAllBoostsToCube();

@@ -68,6 +68,29 @@ class Gui {
 				controlDiv.appendChild( stopA );
 			}
 
+			const inputApplyBoostA = document.createElement('input');
+			{
+				const input = inputApplyBoostA
+				input.type = `text`;
+				input.value = `["weap", "cube"]`;
+				input.style.display = `block`;
+				input.id = "applyBoostInput"
+				controlDiv.appendChild( input );
+			}
+
+			const applyBoostA = document.createElement('a');
+			{
+				const a = applyBoostA;
+				a.textContent = `Apply boosts`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					// nguJs.loops.applyBoosts(["weap", 0, 1, "cube"]);
+					nguJs.loops.applyBoosts(eval(document.getElementById("applyBoostInput").value));
+				}
+				a.style.display = `block`;
+				controlDiv.appendChild( a );
+			}
+
 			const applyAllA = document.createElement('a');
 			{
 				const a = applyAllA;
