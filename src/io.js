@@ -216,6 +216,8 @@ class Keyboard {
 Keyboard.keys = {
 	a: {code:'KeyA', key:'a', keyCode:65},
 	d: {code:'KeyD', key:'d', keyCode:68},
+	r: {code:'KeyR', key:'r', keyCode:82},
+	t: {code:'KeyT', key:'t', keyCode:84},
 	leftArrow: {keyCode:37},
 	upArrow: {keyCode:38},
 	rightArrow: {keyCode:39},

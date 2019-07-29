@@ -28,6 +28,57 @@ class Gui {
 			div.appendChild( nguJsButton );
 		}
 
+		// const test = document.createElement('input');
+		// test.type = `text`;
+		// test.value = `"hello world"`;
+		// document.body.appendChild(test)
+		// const style2 = test.style;
+		// {
+		// 	style2.position = `absolute`;
+		// 	style2.left = `11px`;
+		// 	style2.top = `11px`;
+		// 	style2.width = `100px`;
+		// 	style2.height = `30px`;
+		// 	style2.zIndex = 10000;
+		// 	style2.pointerEvents = `auto`;
+
+		// 	test.oninput = function(e) {
+		// 		console.log("keydown");
+		// 	}
+		// 	test.onkeypress = function(evt) {
+		// 		// console.log("keypress");
+		// 		console.log(evt);
+		// 		// evt.stopPropagation();
+		// 	    // evt = evt || window.event;
+		// 	    // if (typeof evt.stopPropagation != "undefined") {
+		// 	    //     evt.stopPropagation();
+		// 	    // } else {
+		// 	    //     evt.cancelBubble = true;
+		// 	    // }
+		// 	};
+
+		// 	// test.onkeydown = function(evt) {
+		// 	//         // evt.stopPropagation();
+		// 	//     // evt = evt || window.event;
+		// 	//     // if (typeof evt.stopPropagation != "undefined") {
+		// 	//     //     evt.stopPropagation();
+		// 	//     // } else {
+		// 	//     //     evt.cancelBubble = true;
+		// 	//     // }
+		// 	// };
+
+		// 	// test.onkeyup = function(evt) {
+		// 	//         // evt.stopPropagation();
+		// 	//     // evt = evt || window.event;
+		// 	//     // if (typeof evt.stopPropagation != "undefined") {
+		// 	//     //     evt.stopPropagation();
+		// 	//     // } else {
+		// 	//     //     evt.cancelBubble = true;
+		// 	//     // }
+		// 	// };
+		// 	// div.appendChild( test );
+		// }
+
 		const controlDiv = document.createElement('div');
 		{
 			const style = controlDiv.style;
@@ -91,32 +142,81 @@ class Gui {
 				controlDiv.appendChild( a );
 			}
 
-			const applyAllA = document.createElement('a');
+			const toDropA = document.createElement('a');
 			{
-				const a = applyAllA;
-				a.textContent = `Fix inventory`;
-				a.href = `javascript:void nguJs.loops.fixInv();`;
+				const a = toDropA;
+				a.textContent = `To Drop`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loops.toDrop(delay=250, opts={times:1});
+				}
 				a.style.display = `block`;
 				controlDiv.appendChild( a );
 			}
 
-			const fightA = document.createElement('a');
+			const toNguA = document.createElement('a');
 			{
-				const a = fightA;
-				a.textContent = `Snipe boss`;
-				a.href = `javascript:void nguJs.loops.snipeBoss();`;
+				const a = toNguA;
+				a.textContent = `To Ngu`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loops.toNgu(delay=250, opts={times:1});
+				}
 				a.style.display = `block`;
 				controlDiv.appendChild( a );
 			}
 
-			const mainLoopA = document.createElement('a');
+			const inputNgu = document.createElement('input');
 			{
-				const a = mainLoopA;
-				a.textContent = `Snipe bosses and fix inventory`;
-				a.href = `javascript:void nguJs.loops.mainLoop();`;
+				const input = inputNgu
+				input.type = `text`;
+				input.value = `[4, 1]`;
+				input.style.display = `block`;
+				input.id = "applyNguInput"
+				controlDiv.appendChild( input );
+			}
+
+			const applyNgu = document.createElement('a');
+			{
+				const a = applyNgu;
+				a.textContent = `Apply Ngu`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), delay=250, opts={times:1})
+					// for (const ngu of ) {
+						
+					// }
+				}
 				a.style.display = `block`;
 				controlDiv.appendChild( a );
 			}
+
+			// const applyAllA = document.createElement('a');
+			// {
+			// 	const a = applyAllA;
+			// 	a.textContent = `Fix inventory`;
+			// 	a.href = `javascript:void nguJs.loops.fixInv();`;
+			// 	a.style.display = `block`;
+			// 	controlDiv.appendChild( a );
+			// }
+
+			// const fightA = document.createElement('a');
+			// {
+			// 	const a = fightA;
+			// 	a.textContent = `Snipe boss`;
+			// 	a.href = `javascript:void nguJs.loops.snipeBoss();`;
+			// 	a.style.display = `block`;
+			// 	controlDiv.appendChild( a );
+			// }
+
+			// const mainLoopA = document.createElement('a');
+			// {
+			// 	const a = mainLoopA;
+			// 	a.textContent = `Snipe bosses and fix inventory`;
+			// 	a.href = `javascript:void nguJs.loops.mainLoop();`;
+			// 	a.style.display = `block`;
+			// 	controlDiv.appendChild( a );
+			// }
 
 			div.appendChild( controlDiv );
 		}

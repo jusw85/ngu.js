@@ -1,8 +1,9 @@
 
 // high level strategies
 
-const {timeSec} = require('./util.js');
+const {timeSec, wait} = require('./util.js');
 const {coords, feats} = require('./ngu.js');
+const {Keyboard} = require('./io.js');
 
 class LoopRunner {
 	constructor() {
@@ -75,6 +76,37 @@ class LoopRunner {
 		const {logic, io} = nguJs;
 
 		return {
+			applyNgu: this.mkRule( `apply ngu`, async function(slots, delay=250, opts={}) {
+				logic.ngu.goTo();
+				await wait(delay / 1000);
+				await logic.ngu.activateENgu(slots[0]);
+				await logic.ngu.activateMNgu(slots[1]);
+			}),
+
+			toDrop: this.mkRule( `to drop`, async function(delay=250, opts={}) {
+				logic.inv.goTo();
+				await wait(delay / 1000);
+				await logic.inv.loadout(2);
+
+				logic.gd.goTo();
+				await wait(delay / 1000);
+				logic.gd.clearDiggers();
+				await wait(delay / 1000);
+				await logic.gd.activateDiggers(["drop","engu","mngu","ebrd"]);
+			}),
+
+			toNgu: this.mkRule( `to ngu`, async function(delay=250, opts={}) {
+				logic.inv.goTo();
+				await wait(delay / 1000);
+				await logic.inv.loadout(1);
+
+				logic.gd.goTo();
+				await wait(delay / 1000);
+				logic.gd.clearDiggers();
+				await wait(delay / 1000);
+				await logic.gd.activateDiggers(["adv","engu","mngu","ebrd"]);
+			}),
+
 			applyBoosts: this.mkRule( `apply boosts`, async function(slots, timeout=10000, delay=500) {
 				for (const slot of slots) {
 					if (slot === "cube") {

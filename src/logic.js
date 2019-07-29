@@ -3,13 +3,16 @@
 
 const {px} = require('./util.js');
 const {seq} = require('./util.js');
+const {wait} = require('./util.js');
 const {Keyboard} = require('./io.js');
-const {coords, feats, colors} = require('./ngu.js');
+const {coords, feats, colors, gds} = require('./ngu.js');
 
 class Logic {
 	constructor() {
 		this.inv = new InvLogic( this );
 		this.adv = new AdvLogic( this );
+		this.gd = new GdLogic( this );
+		this.ngu = new NguLogic( this );
 	}
 
 	getRidOfMouse() {
@@ -39,6 +42,52 @@ class FeatureLogic {
 	}
 
 	goTo() { return this.logic.toFeat( this.feature ); }
+}
+
+class NguLogic extends FeatureLogic {
+	constructor( logic ) {
+		super( feats.ngu, logic );
+	}
+	async activateENgu( row ) {
+		const {mouse} = nguJs.io;
+		mouse.move(coords.ngu.plus(row));
+		mouse.click();
+		await wait(0.25);
+	}
+	async activateMNgu( row ) {
+		const {mouse} = nguJs.io;
+		mouse.move(coords.ngu.page);
+		mouse.click();
+		await wait(0.25);
+		mouse.move(coords.ngu.plus(row));
+		mouse.click();
+		await wait(0.25);
+	}
+}
+
+class GdLogic extends FeatureLogic {
+	constructor( logic ) {
+		super( feats.gd, logic );
+	}
+	clearDiggers() {
+		const {mouse} = nguJs.io;
+		mouse.move( coords.gd.clear.center );
+		mouse.click();
+	}
+	async activateDigger( digger ) {
+		const {mouse} = nguJs.io;
+		mouse.move(coords.gd[gds[digger][0]].center);
+		mouse.click();
+		await wait(0.25);
+		mouse.move(coords.gd[gds[digger][1]]);
+		mouse.click();
+		await wait(0.25);
+	}
+	async activateDiggers( diggers ) {
+		for (const digger of diggers) {
+			await this.activateDigger(digger);
+		}
+	}
 }
 
 class InvLogic extends FeatureLogic {
@@ -72,9 +121,19 @@ class InvLogic extends FeatureLogic {
 
 	applyBoostToEquip( slot ) {
 		const {mouse} = nguJs.io;
-		var eq = coords.inv.equip[slot];
-		mouse.move( eq.center );
+		mouse.move( coords.inv.equip[slot].center );
 		nguJs.io.keyboard.press( Keyboard.keys.a );
+	}
+
+	async loadout( num ) {
+		nguJs.io.keyboard.press( Keyboard.keys.r );
+		await wait(0.25);
+		nguJs.io.keyboard.press( Keyboard.keys.t );
+		await wait(0.25);
+		const {mouse} = nguJs.io;
+		mouse.move( coords.inv.loadout["l" + num] );
+		mouse.click();
+		await wait(0.25);
 	}
 }
 

@@ -74,8 +74,48 @@ const coords = {
 			acc3: rect( px(452,139), px(502,189) ),
 			acc4: rect( px(452,189), px(502,239) ),
 		},
+		loadout: {
+			l1: px(330, 260),
+			l2: px(360, 260),
+		}
+	},
+	gd: {
+		clear: rect(px (771, 95), px (922, 123)),
+		pg1: rect(px (311, 95), px (372, 123)),
+		pg2: rect(px (375, 95), px (436, 123)),
+		pg3: rect(px (439, 95), px (500, 123)),
+		tl: px(340, 238),
+		bl: px(340, 428),
+		tr: px(656, 238),
+		br: px(656, 428),
+	},
+	ngu: {
+		page: px(365, 115),
+		firstplus: px(517,242),
+		firstminus: px(551,242),
+		plus(row) {
+			return px(this.firstplus.x, this.firstplus.y + (35 * row));
+		},
+		minus(row) {
+			return px(this.firstminus.x, this.firstminus.y + (35 * row));
+		},
 	}
 };
+
+const gds = {
+	drop: ["pg1", "tl"],
+	wand: ["pg1", "tr"],
+	stat: ["pg1", "bl"],
+	adv: ["pg1", "br"],
+	engu: ["pg2", "tl"],
+	mngu: ["pg2", "tr"],
+	ebrd: ["pg2", "bl"],
+	mbrd: ["pg2", "br"],
+	pp: ["pg3", "tl"],
+	dc: ["pg3", "tr"],
+	blood: ["pg3", "bl"],
+	xp: ["pg3", "br"],
+}
 
 const feats = {
 	bt: 0,
@@ -190,4 +230,5 @@ module.exports = {
 	coords,
 	feats,
 	colors,
+	gds,
 };
