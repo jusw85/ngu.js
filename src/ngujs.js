@@ -54,6 +54,8 @@ class NguJs {
 		window.removeEventListener( 'blur', this.focus );
 		this.ui.destroy();
 		await this.loopRunner.stop();
+
+		this.loopRunner.mystop();
 	}
 }
 

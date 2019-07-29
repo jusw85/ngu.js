@@ -9,6 +9,9 @@ class LoopRunner {
 	constructor() {
 		this.currentRule = null;
 		this.shouldStop = false;
+
+		this.myinterval = null;
+		this.mytimeout = null;
 	}
 
 	async sync( nextFrame ) {
@@ -72,10 +75,53 @@ class LoopRunner {
 		}
 	}
 
+	mystop() {
+		if( this.myinterval ) {
+			console.log("stopping interval");
+			clearInterval(this.myinterval);
+		}
+		if( this.mytimeout ) {
+			console.log("stopping timeout");
+			clearTimeout(this.mytimeout);
+		}
+	}
+
 	loops( nguJs ) {
-		const {logic, io} = nguJs;
+		const {logic, io, loopRunner} = nguJs;
 
 		return {
+			test: async function(mytime) {
+				mytime = mytime.split(":");
+				var min = mytime[0];
+				var sec = mytime[1];
+				var timeleft = (((59 - min - 1) * 60) + (60 - sec)) * 1000;
+
+				var fn = async function() {
+					console.log("running fn");
+					await loopRunner.stop();
+					await nguJs.loops.toDrop(250, {times:1});
+					await nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), 250, {times:1})
+					logic.inv.goTo();
+					console.log("waiting for drop");
+					await wait(60);
+					console.log("drop done");
+					await nguJs.loops.toNgu(250, {times:1});
+					await wait(25);
+					await nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), 250, {times:1})
+					logic.inv.goTo();
+					// nguJs.loops.applyBoosts([0,1,"weap", "cube"]);
+					nguJs.loops.applyBoosts(eval(document.getElementById("applyBoostInput").value));
+					console.log("done");
+				}
+				var start = function() {
+					console.log("setting interval");
+					loopRunner.myinterval = setInterval(fn, 60 * 60 * 1000);
+					fn();
+				}
+				loopRunner.mytimeout = setTimeout(start, timeleft);
+				// var timeNow = new Date().getTime();
+			},
+
 			applyNgu: this.mkRule( `apply ngu`, async function(slots, delay=250, opts={}) {
 				logic.ngu.goTo();
 				await wait(delay / 1000);

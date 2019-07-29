@@ -123,7 +123,7 @@ class Gui {
 			{
 				const input = inputApplyBoostA
 				input.type = `text`;
-				input.value = `["weap", "cube"]`;
+				input.value = `[0,"weap", "cube"]`;
 				input.style.display = `block`;
 				input.id = "applyBoostInput"
 				controlDiv.appendChild( input );
@@ -148,7 +148,7 @@ class Gui {
 				a.textContent = `To Drop`;
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
-					nguJs.loops.toDrop(delay=250, opts={times:1});
+					nguJs.loops.toDrop(250, {times:1});
 				}
 				a.style.display = `block`;
 				controlDiv.appendChild( a );
@@ -160,7 +160,7 @@ class Gui {
 				a.textContent = `To Ngu`;
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
-					nguJs.loops.toNgu(delay=250, opts={times:1});
+					nguJs.loops.toNgu(250, {times:1});
 				}
 				a.style.display = `block`;
 				controlDiv.appendChild( a );
@@ -182,10 +182,19 @@ class Gui {
 				a.textContent = `Apply Ngu`;
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
-					nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), delay=250, opts={times:1})
-					// for (const ngu of ) {
-						
-					// }
+					nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), 250, {times:1})
+				}
+				a.style.display = `block`;
+				controlDiv.appendChild( a );
+			}
+
+			const mystop = document.createElement('a');
+			{
+				const a = mystop;
+				a.textContent = `Stop Interval`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loopRunner.mystop();
 				}
 				a.style.display = `block`;
 				controlDiv.appendChild( a );
