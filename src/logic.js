@@ -125,6 +125,18 @@ class InvLogic extends FeatureLogic {
 		nguJs.io.keyboard.press( Keyboard.keys.a );
 	}
 
+	applyMergeToSlot( slot ) {
+		const {mouse} = nguJs.io;
+		mouse.move( coords.inv.slot(slot % 12, Math.floor(slot / 12)).center );
+		nguJs.io.keyboard.press( Keyboard.keys.d );
+	}
+
+	applyMergeToEquip( slot ) {
+		const {mouse} = nguJs.io;
+		mouse.move( coords.inv.equip[slot].center );
+		nguJs.io.keyboard.press( Keyboard.keys.d );
+	}
+
 	async loadout( num ) {
 		nguJs.io.keyboard.press( Keyboard.keys.r );
 		await wait(0.25);
@@ -161,6 +173,23 @@ class AdvLogic extends FeatureLogic {
 	}
 	isEnemyAlive() { return this.logic.queryPixel( colors.adv.enemyAlive ); }
 	isBoss() { return this.logic.queryPixel( colors.adv.boss ); }
+
+	setAtkIdle(isIdle) {
+		if (isIdle != this.logic.queryPixel( colors.adv.atkIdle ))
+			nguJs.io.keyboard.press( Keyboard.keys.q );
+	}
+
+	// async snipe() {
+	// 	this.setAtkIdle(false);
+	// 	for (let i = 0; i < 3; i++) {
+	// 		while (!this.isEnemyAlive()) {
+	// 			await new Promise(resolve => setTimeout(resolve, 10));
+	// 		}
+	// 		nguJs.io.keyboard.press( Keyboard.keys.w );
+	// 		await new Promise(resolve => setTimeout(resolve, 100));
+	// 	}
+	// 	this.setAtkIdle(true);
+	// }
 
 	hpRatioIsAtLeast( ratio ) {
 		return this.logic.queryPixel( colors.adv.ownHpRatioAtLeast(ratio) );

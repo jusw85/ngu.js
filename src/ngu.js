@@ -77,10 +77,11 @@ const coords = {
 		loadout: {
 			l1: px(330, 260),
 			l2: px(360, 260),
+			l3: px(390, 260),
 		}
 	},
 	gd: {
-		clear: rect(px (771, 95), px (922, 123)),
+		clear: rect(px (871, 67), px (940, 123)),
 		pg1: rect(px (311, 95), px (372, 123)),
 		pg2: rect(px (375, 95), px (436, 123)),
 		pg3: rect(px (439, 95), px (500, 123)),
@@ -216,6 +217,7 @@ const colors = {
 
 		// the following might be unreliable
 		enemyAlive: new PixelColor( `enemyAlive`, px(706, 411), darkerThan(.7) ),
+		atkIdle: new PixelColor( `atkIdle`, px(350, 86), palette([[0xffeb04ff, true]], false) ),
 		ownHpRatioAtLeast( ratio ) {
 			const hpBar = coords.adv.self.hpBar;
 			const x = Math.round( hpBar.left+1 + ratio*(hpBar.width-2) );

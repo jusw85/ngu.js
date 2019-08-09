@@ -218,6 +218,8 @@ Keyboard.keys = {
 	d: {code:'KeyD', key:'d', keyCode:68},
 	r: {code:'KeyR', key:'r', keyCode:82},
 	t: {code:'KeyT', key:'t', keyCode:84},
+	q: {code:'KeyQ', key:'q', keyCode:81},
+	w: {code:'KeyW', key:'w', keyCode:87},
 	leftArrow: {keyCode:37},
 	upArrow: {keyCode:38},
 	rightArrow: {keyCode:39},

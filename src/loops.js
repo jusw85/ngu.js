@@ -92,25 +92,28 @@ class LoopRunner {
 		return {
 			test: async function(mytime) {
 				mytime = mytime.split(":");
-				var min = mytime[0];
-				var sec = mytime[1];
-				var timeleft = (((59 - min - 1) * 60) + (60 - sec)) * 1000;
+				var min = parseInt(mytime[0]);
+				var sec = parseInt(mytime[1]);
+				// var timeleft = (((59 - min - 1) * 60) + (60 - sec) + 15) * 1000; 
+				var timeleft = ((min * 60) + sec - 45) * 1000;
+				console.log(timeleft);
 
 				var fn = async function() {
+					console.log(new Date());
 					console.log("running fn");
 					await loopRunner.stop();
 					await nguJs.loops.toDrop(250, {times:1});
 					await nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), 250, {times:1})
 					logic.inv.goTo();
 					console.log("waiting for drop");
-					await wait(60);
+					await wait(55);
 					console.log("drop done");
-					await nguJs.loops.toNgu(250, {times:1});
-					await wait(25);
+					await nguJs.loops.toPp(250, {times:1});
+					await wait(60);
 					await nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), 250, {times:1})
 					logic.inv.goTo();
-					// nguJs.loops.applyBoosts([0,1,"weap", "cube"]);
-					nguJs.loops.applyBoosts(eval(document.getElementById("applyBoostInput").value));
+					// nguJs.loops.applyBoosts(eval(document.getElementById("applyBoostInput").value));
+					nguJs.loops.mainLoop3(eval(document.getElementById("applyBoostInput").value), 10);
 					console.log("done");
 				}
 				var start = function() {
@@ -138,7 +141,7 @@ class LoopRunner {
 				await wait(delay / 1000);
 				logic.gd.clearDiggers();
 				await wait(delay / 1000);
-				await logic.gd.activateDiggers(["drop","engu","mngu","ebrd"]);
+				await logic.gd.activateDiggers(["drop","adv","pp","dc"]);
 			}),
 
 			toNgu: this.mkRule( `to ngu`, async function(delay=250, opts={}) {
@@ -153,7 +156,20 @@ class LoopRunner {
 				await logic.gd.activateDiggers(["adv","engu","mngu","ebrd"]);
 			}),
 
-			applyBoosts: this.mkRule( `apply boosts`, async function(slots, timeout=10000, delay=500) {
+
+			toPp: this.mkRule( `to pp`, async function(delay=250, opts={}) {
+				logic.inv.goTo();
+				await wait(delay / 1000);
+				await logic.inv.loadout(3);
+
+				logic.gd.goTo();
+				await wait(delay / 1000);
+				logic.gd.clearDiggers();
+				await wait(delay / 1000);
+				await logic.gd.activateDiggers(["adv","pp","dc","ebrd"]);
+			}),
+
+			applyBoosts: this.mkRule( `apply boosts`, async function(slots, timeout=10000, delay=250) {
 				for (const slot of slots) {
 					if (slot === "cube") {
 						logic.inv.applyAllBoostsToCube();
@@ -165,6 +181,47 @@ class LoopRunner {
 					await new Promise(resolve => setTimeout(resolve, delay));
 				}
 				await new Promise(resolve => setTimeout(resolve, timeout));
+			}),
+
+			applyMerges: this.mkRule( `apply merges`, async function(slots, timeout=10000, delay=250) {
+				for (const slot of slots) {
+					if (slot === "cube") {
+						logic.inv.applyAllBoostsToCube();
+					} else if (typeof slot === "number") {
+						logic.inv.applyMergeToSlot(slot)
+					} else {
+						logic.inv.applyMergeToEquip(slot)
+					}
+					await new Promise(resolve => setTimeout(resolve, delay));
+				}
+				await new Promise(resolve => setTimeout(resolve, timeout));
+			}),
+
+			itopodSnipe: this.mkRule( `itopod snipe`, async function(num=3, timeout=10000, delay=250) {
+				logic.adv.goTo();
+				logic.getRidOfMouse();
+				await new Promise(resolve => setTimeout(resolve, 500));
+				logic.adv.setAtkIdle(false);
+				for (let i = 0; i < num; i++) {
+					await new Promise(resolve => setTimeout(resolve, 800));
+					while (!logic.adv.isEnemyAlive()) {
+						await new Promise(resolve => setTimeout(resolve, 10));
+					}
+					nguJs.io.keyboard.press( Keyboard.keys.w );
+				}
+				logic.adv.setAtkIdle(true);
+			}),
+
+			mainLoop3: this.mkRule( `mainloop3`, async function(slot, num=3, timeout=10000, delay=250){
+				await nguJs.loops.itopodSnipe.fn.call( this, num );
+				// await new Promise(resolve => setTimeout(resolve, 800));
+				logic.inv.goTo();
+				await nguJs.loops.applyBoosts.fn.call( this, slot, 100, delay );
+			}),
+
+			mainLoop2: this.mkRule( `mainloop2`, async function(slots, slot2, timeout=10000, delay=250){
+				await nguJs.loops.applyMerges.fn.call( this, slots, 1000, delay );
+				await nguJs.loops.applyBoosts.fn.call( this, slot2, timeout, delay );
 			}),
 
 			fixInv: this.mkRule( `fix inventory`, async function() {

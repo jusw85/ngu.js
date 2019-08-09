@@ -91,9 +91,9 @@ class Gui {
 			style.pointerEvents = `auto`;
 			style.boxSizing = `border-box`;
 			style.backgroundColor = `white`;
-	    style.borderRadius = `5px`;
-	    style.border = `2px solid black`;
-	    style.opacity = .95;
+			style.borderRadius = `5px`;
+			style.border = `2px solid black`;
+			style.opacity = .95;
 			style.padding = `10px`;
 			style.zIndex = 5000;
 
@@ -170,7 +170,7 @@ class Gui {
 			{
 				const input = inputNgu
 				input.type = `text`;
-				input.value = `[4, 1]`;
+				input.value = `[0, 0]`;
 				input.style.display = `block`;
 				input.id = "applyNguInput"
 				controlDiv.appendChild( input );
@@ -195,6 +195,54 @@ class Gui {
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
 					nguJs.loopRunner.mystop();
+				}
+				a.style.display = `block`;
+				controlDiv.appendChild( a );
+			}
+
+			const inputApplyMergeA = document.createElement('input');
+			{
+				const input = inputApplyMergeA
+				input.type = `text`;
+				input.value = `[0,1,2,3,"weap"]`;
+				input.style.display = `block`;
+				input.id = "applyMergeInput"
+				controlDiv.appendChild( input );
+			}
+
+			const applyMergeA = document.createElement('a');
+			{
+				const a = applyMergeA;
+				a.textContent = `Apply merges`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					// nguJs.loops.applyBoosts(["weap", 0, 1, "cube"]);
+					nguJs.loops.applyMerges(eval(document.getElementById("applyMergeInput").value));
+				}
+				a.style.display = `block`;
+				controlDiv.appendChild( a );
+			}
+
+			const mainLoopA = document.createElement('a');
+			{
+				const a = mainLoopA;
+				a.textContent = `Mainloop2`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					// nguJs.loops.applyBoosts(["weap", 0, 1, "cube"]);
+					nguJs.loops.mainLoop2(eval(document.getElementById("applyMergeInput").value), eval(document.getElementById("applyBoostInput").value));
+				}
+				a.style.display = `block`;
+				controlDiv.appendChild( a );
+			}
+
+			const mainLoop3A = document.createElement('a');
+			{
+				const a = mainLoop3A;
+				a.textContent = `Mainloop3`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loops.mainLoop3(eval(document.getElementById("applyBoostInput").value), 10);
 				}
 				a.style.display = `block`;
 				controlDiv.appendChild( a );
