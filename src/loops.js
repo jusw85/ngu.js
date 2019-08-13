@@ -92,24 +92,32 @@ class LoopRunner {
 		return {
 			test: async function(mytime) {
 				mytime = mytime.split(":");
-				var min = parseInt(mytime[0]);
-				var sec = parseInt(mytime[1]);
+				var hr = parseInt(mytime[0]);
+				var min = parseInt(mytime[1]);
+				var sec = parseInt(mytime[2]);
 				// var timeleft = (((59 - min - 1) * 60) + (60 - sec) + 15) * 1000; 
-				var timeleft = ((min * 60) + sec - 45) * 1000;
+				var timeleft = ((hr * 60 * 60) + (min * 60) + (sec) - 45) * 1000;
 				console.log(timeleft);
 
 				var fn = async function() {
 					console.log(new Date());
 					console.log("running fn");
+					// console.log(nguJs.gui.config);
+					var cfg = nguJs.gui.config;
 					await loopRunner.stop();
-					await nguJs.loops.toDrop(250, {times:1});
+					// await nguJs.loops.toDrop(250, {times:1});
+					await nguJs.loops.toLoadout(cfg.loadouts["drop"].lo, cfg.loadouts["drop"].digger, 250, {times:1});
 					await nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), 250, {times:1})
 					logic.inv.goTo();
 					console.log("waiting for drop");
 					await wait(55);
 					console.log("drop done");
-					await nguJs.loops.toPp(250, {times:1});
-					await wait(60);
+
+					await nguJs.loops.applyBoosts.fn.call( this, eval(document.getElementById("applyBoostInput").value), 100, 250 );
+
+					// await nguJs.loops.toPp(250, {times:1});
+					await nguJs.loops.toLoadout(cfg.loadouts["pp"].lo, cfg.loadouts["pp"].digger, 250, {times:1});
+					await wait(50);
 					await nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), 250, {times:1})
 					logic.inv.goTo();
 					// nguJs.loops.applyBoosts(eval(document.getElementById("applyBoostInput").value));
@@ -118,7 +126,7 @@ class LoopRunner {
 				}
 				var start = function() {
 					console.log("setting interval");
-					loopRunner.myinterval = setInterval(fn, 60 * 60 * 1000);
+					loopRunner.myinterval = setInterval(fn, 3 * 60 * 60 * 1000);
 					fn();
 				}
 				loopRunner.mytimeout = setTimeout(start, timeleft);
@@ -132,41 +140,53 @@ class LoopRunner {
 				await logic.ngu.activateMNgu(slots[1]);
 			}),
 
-			toDrop: this.mkRule( `to drop`, async function(delay=250, opts={}) {
+			// toDrop: this.mkRule( `to drop`, async function(delay=250, opts={}) {
+			// 	logic.inv.goTo();
+			// 	await wait(delay / 1000);
+			// 	await logic.inv.loadout(2);
+
+			// 	logic.gd.goTo();
+			// 	await wait(delay / 1000);
+			// 	logic.gd.clearDiggers();
+			// 	await wait(delay / 1000);
+			// 	await logic.gd.activateDiggers(["drop","adv","pp","dc"]);
+			// }),
+
+			// toNgu: this.mkRule( `to ngu`, async function(delay=250, opts={}) {
+			// 	logic.inv.goTo();
+			// 	await wait(delay / 1000);
+			// 	await logic.inv.loadout(1);
+
+			// 	logic.gd.goTo();
+			// 	await wait(delay / 1000);
+			// 	logic.gd.clearDiggers();
+			// 	await wait(delay / 1000);
+			// 	await logic.gd.activateDiggers(["adv","engu","mngu","ebrd"]);
+			// }),
+
+
+			// toPp: this.mkRule( `to pp`, async function(delay=250, opts={}) {
+			// 	logic.inv.goTo();
+			// 	await wait(delay / 1000);
+			// 	await logic.inv.loadout(3);
+
+			// 	logic.gd.goTo();
+			// 	await wait(delay / 1000);
+			// 	logic.gd.clearDiggers();
+			// 	await wait(delay / 1000);
+			// 	await logic.gd.activateDiggers(["adv","pp","dc","ebrd"]);
+			// }),
+
+			toLoadout: this.mkRule( `to loadout`, async function(loidx, diggers, delay=250, opts={}) {
 				logic.inv.goTo();
 				await wait(delay / 1000);
-				await logic.inv.loadout(2);
+				await logic.inv.loadout(loidx);
 
 				logic.gd.goTo();
 				await wait(delay / 1000);
 				logic.gd.clearDiggers();
 				await wait(delay / 1000);
-				await logic.gd.activateDiggers(["drop","adv","pp","dc"]);
-			}),
-
-			toNgu: this.mkRule( `to ngu`, async function(delay=250, opts={}) {
-				logic.inv.goTo();
-				await wait(delay / 1000);
-				await logic.inv.loadout(1);
-
-				logic.gd.goTo();
-				await wait(delay / 1000);
-				logic.gd.clearDiggers();
-				await wait(delay / 1000);
-				await logic.gd.activateDiggers(["adv","engu","mngu","ebrd"]);
-			}),
-
-
-			toPp: this.mkRule( `to pp`, async function(delay=250, opts={}) {
-				logic.inv.goTo();
-				await wait(delay / 1000);
-				await logic.inv.loadout(3);
-
-				logic.gd.goTo();
-				await wait(delay / 1000);
-				logic.gd.clearDiggers();
-				await wait(delay / 1000);
-				await logic.gd.activateDiggers(["adv","pp","dc","ebrd"]);
+				await logic.gd.activateDiggers(diggers);
 			}),
 
 			applyBoosts: this.mkRule( `apply boosts`, async function(slots, timeout=10000, delay=250) {

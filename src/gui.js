@@ -22,8 +22,8 @@ class Gui {
 			style.pointerEvents = `auto`;
 			style.boxSizing = `border-box`;
 			style.backgroundColor = `white`;
-	    style.borderRadius = `5px`;
-	    style.border = `2px solid black`;
+			style.borderRadius = `5px`;
+			style.border = `2px solid black`;
 			style.zIndex = 10000;
 			div.appendChild( nguJsButton );
 		}
@@ -79,6 +79,9 @@ class Gui {
 		// 	// div.appendChild( test );
 		// }
 
+		// var config = null;
+		var _this = this;
+		this.config = null;
 		const controlDiv = document.createElement('div');
 		{
 			const style = controlDiv.style;
@@ -142,29 +145,29 @@ class Gui {
 				controlDiv.appendChild( a );
 			}
 
-			const toDropA = document.createElement('a');
-			{
-				const a = toDropA;
-				a.textContent = `To Drop`;
-				a.href = `javascript:void(0)`;
-				a.onclick = function() {
-					nguJs.loops.toDrop(250, {times:1});
-				}
-				a.style.display = `block`;
-				controlDiv.appendChild( a );
-			}
+			// const toDropA = document.createElement('a');
+			// {
+			// 	const a = toDropA;
+			// 	a.textContent = `To Drop`;
+			// 	a.href = `javascript:void(0)`;
+			// 	a.onclick = function() {
+			// 		nguJs.loops.toDrop(250, {times:1});
+			// 	}
+			// 	a.style.display = `block`;
+			// 	controlDiv.appendChild( a );
+			// }
 
-			const toNguA = document.createElement('a');
-			{
-				const a = toNguA;
-				a.textContent = `To Ngu`;
-				a.href = `javascript:void(0)`;
-				a.onclick = function() {
-					nguJs.loops.toNgu(250, {times:1});
-				}
-				a.style.display = `block`;
-				controlDiv.appendChild( a );
-			}
+			// const toNguA = document.createElement('a');
+			// {
+			// 	const a = toNguA;
+			// 	a.textContent = `To Ngu`;
+			// 	a.href = `javascript:void(0)`;
+			// 	a.onclick = function() {
+			// 		nguJs.loops.toNgu(250, {times:1});
+			// 	}
+			// 	a.style.display = `block`;
+			// 	controlDiv.appendChild( a );
+			// }
 
 			const inputNgu = document.createElement('input');
 			{
@@ -247,6 +250,82 @@ class Gui {
 				a.style.display = `block`;
 				controlDiv.appendChild( a );
 			}
+
+
+
+
+			var br = document.createElement("br");
+
+			const textAreaA = document.createElement('textarea');
+			{
+				const ta = textAreaA
+				ta.value =
+`{
+  "loadouts": {
+    "ngu": {"lo": 1, "digger": ["adv","engu","mngu","ebrd"]},
+    "drop": {"lo": 2, "digger": ["drop","adv","pp","dc"]},
+    "pp": {"lo": 3, "digger": ["adv","pp","dc","engu"]}	
+  }
+}`;
+				ta.cols = 80;
+				ta.rows = 6;
+				ta.style.display = `block`;
+				ta.id = "config";
+				this.config = JSON.parse(ta.value);
+			}
+
+			const loadoutDropdownA = document.createElement('select');
+			{
+				const a = loadoutDropdownA;
+				a.style.display = `block`;
+				a.id = "lo-dropdown";
+			}
+
+			function refreshLoadoutDropdown() {
+				var s = loadoutDropdownA;
+				for(let i = s.options.length - 1 ; i >= 0 ; i--) {
+					s.remove(i);
+				}
+				for (var key in _this.config["loadouts"]) {
+					var opt = document.createElement("option"); 
+					opt.text = key;
+					opt.value = key;
+					s.options.add(opt);
+				}
+			}
+
+			const refreshConfigA = document.createElement('a');
+			{
+				const a = refreshConfigA;
+				a.textContent = `Refresh Config`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					_this.config = JSON.parse(document.getElementById("config").value);
+					refreshLoadoutDropdown();
+				}
+				a.style.display = `block`;
+			}
+
+			const toloadoutA = document.createElement('a');
+			{
+				const a = toloadoutA;
+				a.textContent = `To Loadout`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					var idx = document.getElementById("lo-dropdown").value;
+					var loidx = _this.config.loadouts[idx].lo;
+					var digger = _this.config.loadouts[idx].digger;
+					nguJs.loops.toLoadout(loidx, digger, 250, {times:1});
+				}
+				a.style.display = `block`;
+			}
+
+			controlDiv.appendChild(textAreaA);
+			controlDiv.appendChild(refreshConfigA);
+			controlDiv.appendChild(br);
+			controlDiv.appendChild(loadoutDropdownA);
+			controlDiv.appendChild(toloadoutA);
+			refreshLoadoutDropdown();
 
 			// const applyAllA = document.createElement('a');
 			// {

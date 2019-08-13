@@ -179,18 +179,6 @@ class AdvLogic extends FeatureLogic {
 			nguJs.io.keyboard.press( Keyboard.keys.q );
 	}
 
-	// async snipe() {
-	// 	this.setAtkIdle(false);
-	// 	for (let i = 0; i < 3; i++) {
-	// 		while (!this.isEnemyAlive()) {
-	// 			await new Promise(resolve => setTimeout(resolve, 10));
-	// 		}
-	// 		nguJs.io.keyboard.press( Keyboard.keys.w );
-	// 		await new Promise(resolve => setTimeout(resolve, 100));
-	// 	}
-	// 	this.setAtkIdle(true);
-	// }
-
 	hpRatioIsAtLeast( ratio ) {
 		return this.logic.queryPixel( colors.adv.ownHpRatioAtLeast(ratio) );
 	}
