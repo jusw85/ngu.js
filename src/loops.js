@@ -75,7 +75,7 @@ class LoopRunner {
 		}
 	}
 
-	mystop() {
+	stopInterval() {
 		if( this.myinterval ) {
 			console.log("stopping interval");
 			clearInterval(this.myinterval);
@@ -96,37 +96,35 @@ class LoopRunner {
 				var min = parseInt(mytime[1]);
 				var sec = parseInt(mytime[2]);
 				// var timeleft = (((59 - min - 1) * 60) + (60 - sec) + 15) * 1000; 
-				var timeleft = ((hr * 60 * 60) + (min * 60) + (sec) - 45) * 1000;
+				var timeleft = ((hr * 60 * 60) + (min * 60) + (sec) - nguJs.gui.config.snipeAndBoost.preWait) * 1000;
 				console.log(timeleft);
 
 				var fn = async function() {
 					console.log(new Date());
 					console.log("running fn");
-					// console.log(nguJs.gui.config);
 					var cfg = nguJs.gui.config;
 					await loopRunner.stop();
-					// await nguJs.loops.toDrop(250, {times:1});
-					await nguJs.loops.toLoadout(cfg.loadouts["drop"].lo, cfg.loadouts["drop"].digger, 250, {times:1});
-					await nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), 250, {times:1})
+					await nguJs.loops.toLoadout(cfg.loadouts[cfg.snipeAndBoost.lo1].lo, cfg.loadouts[cfg.snipeAndBoost.lo1].digger, 250, {times:1});
+					await nguJs.loops.applyNgu(cfg["ngu"], 250, {times:1})
 					logic.inv.goTo();
 					console.log("waiting for drop");
-					await wait(55);
+					await wait(cfg.snipeAndBoost.wait1);
 					console.log("drop done");
 
-					await nguJs.loops.applyBoosts.fn.call( this, eval(document.getElementById("applyBoostInput").value), 100, 250 );
+					await nguJs.loops.applyBoosts.fn.call( this, cfg.boost, 100, 250 );
 
-					// await nguJs.loops.toPp(250, {times:1});
-					await nguJs.loops.toLoadout(cfg.loadouts["pp"].lo, cfg.loadouts["pp"].digger, 250, {times:1});
-					await wait(50);
-					await nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), 250, {times:1})
+					await nguJs.loops.toLoadout(cfg.loadouts[cfg.snipeAndBoost.lo2].lo, cfg.loadouts[cfg.snipeAndBoost.lo2].digger, 250, {times:1});
+					await wait(cfg.snipeAndBoost.wait2);
+					await nguJs.loops.applyNgu(cfg["ngu"], 250, {times:1})
 					logic.inv.goTo();
-					// nguJs.loops.applyBoosts(eval(document.getElementById("applyBoostInput").value));
-					nguJs.loops.mainLoop3(eval(document.getElementById("applyBoostInput").value), 10);
+					// nguJs.loops.applyBoosts(cfg.boost);
+					nguJs.loops.snipeAndBoost(cfg.boost, 10);
 					console.log("done");
 				}
 				var start = function() {
 					console.log("setting interval");
-					loopRunner.myinterval = setInterval(fn, 3 * 60 * 60 * 1000);
+					console.log(nguJs.gui.config.snipeAndBoost.intervalMin * 60 * 1000);
+					loopRunner.myinterval = setInterval(fn, nguJs.gui.config.snipeAndBoost.intervalMin * 60 * 1000);
 					fn();
 				}
 				loopRunner.mytimeout = setTimeout(start, timeleft);
@@ -139,43 +137,6 @@ class LoopRunner {
 				await logic.ngu.activateENgu(slots[0]);
 				await logic.ngu.activateMNgu(slots[1]);
 			}),
-
-			// toDrop: this.mkRule( `to drop`, async function(delay=250, opts={}) {
-			// 	logic.inv.goTo();
-			// 	await wait(delay / 1000);
-			// 	await logic.inv.loadout(2);
-
-			// 	logic.gd.goTo();
-			// 	await wait(delay / 1000);
-			// 	logic.gd.clearDiggers();
-			// 	await wait(delay / 1000);
-			// 	await logic.gd.activateDiggers(["drop","adv","pp","dc"]);
-			// }),
-
-			// toNgu: this.mkRule( `to ngu`, async function(delay=250, opts={}) {
-			// 	logic.inv.goTo();
-			// 	await wait(delay / 1000);
-			// 	await logic.inv.loadout(1);
-
-			// 	logic.gd.goTo();
-			// 	await wait(delay / 1000);
-			// 	logic.gd.clearDiggers();
-			// 	await wait(delay / 1000);
-			// 	await logic.gd.activateDiggers(["adv","engu","mngu","ebrd"]);
-			// }),
-
-
-			// toPp: this.mkRule( `to pp`, async function(delay=250, opts={}) {
-			// 	logic.inv.goTo();
-			// 	await wait(delay / 1000);
-			// 	await logic.inv.loadout(3);
-
-			// 	logic.gd.goTo();
-			// 	await wait(delay / 1000);
-			// 	logic.gd.clearDiggers();
-			// 	await wait(delay / 1000);
-			// 	await logic.gd.activateDiggers(["adv","pp","dc","ebrd"]);
-			// }),
 
 			toLoadout: this.mkRule( `to loadout`, async function(loidx, diggers, delay=250, opts={}) {
 				logic.inv.goTo();
@@ -232,14 +193,13 @@ class LoopRunner {
 				logic.adv.setAtkIdle(true);
 			}),
 
-			mainLoop3: this.mkRule( `mainloop3`, async function(slot, num=3, timeout=10000, delay=250){
+			snipeAndBoost: this.mkRule( `snipeAndBoost`, async function(slot, num=3, timeout=10000, delay=250){
 				await nguJs.loops.itopodSnipe.fn.call( this, num );
-				// await new Promise(resolve => setTimeout(resolve, 800));
 				logic.inv.goTo();
 				await nguJs.loops.applyBoosts.fn.call( this, slot, 100, delay );
 			}),
 
-			mainLoop2: this.mkRule( `mainloop2`, async function(slots, slot2, timeout=10000, delay=250){
+			mergeAndBoost: this.mkRule( `mergeAndBoost`, async function(slots, slot2, timeout=10000, delay=250){
 				await nguJs.loops.applyMerges.fn.call( this, slots, 1000, delay );
 				await nguJs.loops.applyBoosts.fn.call( this, slot2, timeout, delay );
 			}),

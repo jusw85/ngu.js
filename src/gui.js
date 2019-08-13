@@ -28,58 +28,6 @@ class Gui {
 			div.appendChild( nguJsButton );
 		}
 
-		// const test = document.createElement('input');
-		// test.type = `text`;
-		// test.value = `"hello world"`;
-		// document.body.appendChild(test)
-		// const style2 = test.style;
-		// {
-		// 	style2.position = `absolute`;
-		// 	style2.left = `11px`;
-		// 	style2.top = `11px`;
-		// 	style2.width = `100px`;
-		// 	style2.height = `30px`;
-		// 	style2.zIndex = 10000;
-		// 	style2.pointerEvents = `auto`;
-
-		// 	test.oninput = function(e) {
-		// 		console.log("keydown");
-		// 	}
-		// 	test.onkeypress = function(evt) {
-		// 		// console.log("keypress");
-		// 		console.log(evt);
-		// 		// evt.stopPropagation();
-		// 	    // evt = evt || window.event;
-		// 	    // if (typeof evt.stopPropagation != "undefined") {
-		// 	    //     evt.stopPropagation();
-		// 	    // } else {
-		// 	    //     evt.cancelBubble = true;
-		// 	    // }
-		// 	};
-
-		// 	// test.onkeydown = function(evt) {
-		// 	//         // evt.stopPropagation();
-		// 	//     // evt = evt || window.event;
-		// 	//     // if (typeof evt.stopPropagation != "undefined") {
-		// 	//     //     evt.stopPropagation();
-		// 	//     // } else {
-		// 	//     //     evt.cancelBubble = true;
-		// 	//     // }
-		// 	// };
-
-		// 	// test.onkeyup = function(evt) {
-		// 	//         // evt.stopPropagation();
-		// 	//     // evt = evt || window.event;
-		// 	//     // if (typeof evt.stopPropagation != "undefined") {
-		// 	//     //     evt.stopPropagation();
-		// 	//     // } else {
-		// 	//     //     evt.cancelBubble = true;
-		// 	//     // }
-		// 	// };
-		// 	// div.appendChild( test );
-		// }
-
-		// var config = null;
 		var _this = this;
 		this.config = null;
 		const controlDiv = document.createElement('div');
@@ -111,7 +59,6 @@ class Gui {
 					});
 					currentLoopP.appendChild( currentLoopSpan );
 				}
-				controlDiv.appendChild( currentLoopP );
 			}
 
 			const stopA = document.createElement('a');
@@ -119,17 +66,39 @@ class Gui {
 				stopA.textContent = `Stop loop`;
 				stopA.href = `javascript:void nguJs.loopRunner.stop();`;
 				stopA.style.display = `block`;
-				controlDiv.appendChild( stopA );
 			}
 
-			const inputApplyBoostA = document.createElement('input');
+			const stopIntervalA = document.createElement('a');
 			{
-				const input = inputApplyBoostA
-				input.type = `text`;
-				input.value = `[0,"weap", "cube"]`;
-				input.style.display = `block`;
-				input.id = "applyBoostInput"
-				controlDiv.appendChild( input );
+				const a = stopIntervalA;
+				a.textContent = `Stop interval`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loopRunner.stopInterval();
+				}
+				a.style.display = `block`;
+			}
+
+			const mergeAndBoostA = document.createElement('a');
+			{
+				const a = mergeAndBoostA;
+				a.textContent = `Merge and boost`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loops.mergeAndBoost(_this.config["merge"], _this.config["boost"]);
+				}
+				a.style.display = `block`;
+			}
+
+			const snipeAndBoostA = document.createElement('a');
+			{
+				const a = snipeAndBoostA;
+				a.textContent = `Snipe and boost`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loops.snipeAndBoost(_this.config["boost"], 10);
+				}
+				a.style.display = `block`;
 			}
 
 			const applyBoostA = document.createElement('a');
@@ -139,78 +108,10 @@ class Gui {
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
 					// nguJs.loops.applyBoosts(["weap", 0, 1, "cube"]);
-					nguJs.loops.applyBoosts(eval(document.getElementById("applyBoostInput").value));
+					// nguJs.loops.applyBoosts(eval(document.getElementById("applyBoostInput").value));
+					nguJs.loops.applyBoosts(_this.config["boost"]);
 				}
 				a.style.display = `block`;
-				controlDiv.appendChild( a );
-			}
-
-			// const toDropA = document.createElement('a');
-			// {
-			// 	const a = toDropA;
-			// 	a.textContent = `To Drop`;
-			// 	a.href = `javascript:void(0)`;
-			// 	a.onclick = function() {
-			// 		nguJs.loops.toDrop(250, {times:1});
-			// 	}
-			// 	a.style.display = `block`;
-			// 	controlDiv.appendChild( a );
-			// }
-
-			// const toNguA = document.createElement('a');
-			// {
-			// 	const a = toNguA;
-			// 	a.textContent = `To Ngu`;
-			// 	a.href = `javascript:void(0)`;
-			// 	a.onclick = function() {
-			// 		nguJs.loops.toNgu(250, {times:1});
-			// 	}
-			// 	a.style.display = `block`;
-			// 	controlDiv.appendChild( a );
-			// }
-
-			const inputNgu = document.createElement('input');
-			{
-				const input = inputNgu
-				input.type = `text`;
-				input.value = `[0, 0]`;
-				input.style.display = `block`;
-				input.id = "applyNguInput"
-				controlDiv.appendChild( input );
-			}
-
-			const applyNgu = document.createElement('a');
-			{
-				const a = applyNgu;
-				a.textContent = `Apply Ngu`;
-				a.href = `javascript:void(0)`;
-				a.onclick = function() {
-					nguJs.loops.applyNgu(eval(document.getElementById("applyNguInput").value), 250, {times:1})
-				}
-				a.style.display = `block`;
-				controlDiv.appendChild( a );
-			}
-
-			const mystop = document.createElement('a');
-			{
-				const a = mystop;
-				a.textContent = `Stop Interval`;
-				a.href = `javascript:void(0)`;
-				a.onclick = function() {
-					nguJs.loopRunner.mystop();
-				}
-				a.style.display = `block`;
-				controlDiv.appendChild( a );
-			}
-
-			const inputApplyMergeA = document.createElement('input');
-			{
-				const input = inputApplyMergeA
-				input.type = `text`;
-				input.value = `[0,1,2,3,"weap"]`;
-				input.style.display = `block`;
-				input.id = "applyMergeInput"
-				controlDiv.appendChild( input );
 			}
 
 			const applyMergeA = document.createElement('a');
@@ -219,52 +120,43 @@ class Gui {
 				a.textContent = `Apply merges`;
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
-					// nguJs.loops.applyBoosts(["weap", 0, 1, "cube"]);
-					nguJs.loops.applyMerges(eval(document.getElementById("applyMergeInput").value));
+					nguJs.loops.applyMerges(_this.config["merge"]);
 				}
 				a.style.display = `block`;
-				controlDiv.appendChild( a );
 			}
 
-			const mainLoopA = document.createElement('a');
+			const applyNguA = document.createElement('a');
 			{
-				const a = mainLoopA;
-				a.textContent = `Mainloop2`;
+				const a = applyNguA;
+				a.textContent = `Apply ngu`;
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
-					// nguJs.loops.applyBoosts(["weap", 0, 1, "cube"]);
-					nguJs.loops.mainLoop2(eval(document.getElementById("applyMergeInput").value), eval(document.getElementById("applyBoostInput").value));
+					nguJs.loops.applyNgu(_this.config["ngu"], 250, {times:1});
 				}
 				a.style.display = `block`;
 				controlDiv.appendChild( a );
 			}
-
-			const mainLoop3A = document.createElement('a');
-			{
-				const a = mainLoop3A;
-				a.textContent = `Mainloop3`;
-				a.href = `javascript:void(0)`;
-				a.onclick = function() {
-					nguJs.loops.mainLoop3(eval(document.getElementById("applyBoostInput").value), 10);
-				}
-				a.style.display = `block`;
-				controlDiv.appendChild( a );
-			}
-
-
-
-
-			var br = document.createElement("br");
 
 			const textAreaA = document.createElement('textarea');
 			{
 				const ta = textAreaA
 				ta.value =
 `{
+  "boost": ["weap", "cube"],
+  "merge": [0,1,2,3,"weap"],
+  "ngu": [0,0],
   "loadouts": {
     "ngu": {"lo": 1, "digger": ["adv","engu","mngu","ebrd"]},
     "drop": {"lo": 2, "digger": ["drop","adv","pp","dc"]},
     "pp": {"lo": 3, "digger": ["adv","pp","dc","engu"]}	
+  },
+  "snipeAndBoost": {
+    "intervalMin": 180,
+    "preWait": 45,
+    "wait1": 55,
+    "wait2": 50,
+    "lo1": "drop",
+    "lo2": "pp"
   }
 }`;
 				ta.cols = 80;
@@ -309,7 +201,7 @@ class Gui {
 			const toloadoutA = document.createElement('a');
 			{
 				const a = toloadoutA;
-				a.textContent = `To Loadout`;
+				a.textContent = `Apply loadout`;
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
 					var idx = document.getElementById("lo-dropdown").value;
@@ -322,9 +214,20 @@ class Gui {
 
 			controlDiv.appendChild(textAreaA);
 			controlDiv.appendChild(refreshConfigA);
-			controlDiv.appendChild(br);
+			controlDiv.appendChild(document.createElement("br"));
+			controlDiv.appendChild(currentLoopP);
+			controlDiv.appendChild(stopA);
+			controlDiv.appendChild(document.createElement("br"));
+			controlDiv.appendChild(applyBoostA);
+			controlDiv.appendChild(applyMergeA);
+			controlDiv.appendChild(applyNguA);
+			controlDiv.appendChild(mergeAndBoostA);
+			controlDiv.appendChild(snipeAndBoostA);
+			controlDiv.appendChild(document.createElement("br"));
 			controlDiv.appendChild(loadoutDropdownA);
 			controlDiv.appendChild(toloadoutA);
+			controlDiv.appendChild(document.createElement("br"));
+			controlDiv.appendChild(stopIntervalA);
 			refreshLoadoutDropdown();
 
 			// const applyAllA = document.createElement('a');
