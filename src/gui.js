@@ -101,6 +101,17 @@ class Gui {
 				a.style.display = `block`;
 			}
 
+			const killBossOnlyA = document.createElement('a');
+			{
+				const a = killBossOnlyA;
+				a.textContent = `Kill boss only`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loops.killBossOnly();
+				}
+				a.style.display = `block`;
+			}
+
 			const applyBoostA = document.createElement('a');
 			{
 				const a = applyBoostA;
@@ -223,6 +234,7 @@ class Gui {
 			controlDiv.appendChild(applyNguA);
 			controlDiv.appendChild(mergeAndBoostA);
 			controlDiv.appendChild(snipeAndBoostA);
+			controlDiv.appendChild(killBossOnlyA);
 			controlDiv.appendChild(document.createElement("br"));
 			controlDiv.appendChild(loadoutDropdownA);
 			controlDiv.appendChild(toloadoutA);

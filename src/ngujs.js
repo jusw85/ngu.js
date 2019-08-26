@@ -55,7 +55,7 @@ class NguJs {
 		this.ui.destroy();
 		await this.loopRunner.stop();
 
-		this.loopRunner.mystop();
+		this.loopRunner.stopInterval();
 	}
 }
 

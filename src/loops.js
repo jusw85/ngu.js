@@ -204,6 +204,30 @@ class LoopRunner {
 				await nguJs.loops.applyBoosts.fn.call( this, slot2, timeout, delay );
 			}),
 
+			killBossOnly: this.mkRule( `killBossOnly`, async function(){
+				logic.adv.goTo();
+				logic.getRidOfMouse();
+				await new Promise(resolve => setTimeout(resolve, 500));
+				logic.adv.setAtkIdle(true);
+				while (true) {
+					await this.sync(true);
+					while (!logic.adv.isEnemyAlive()) {
+						await new Promise(resolve => setTimeout(resolve, 10));
+					}
+					if(!logic.adv.isBoss()) {
+						logic.adv.prevArea();
+						await new Promise(resolve => setTimeout(resolve, 300));
+						logic.adv.nextArea();
+						await new Promise(resolve => setTimeout(resolve, 300));
+						continue;
+					}
+					await this.sync(true);
+					while (logic.adv.isEnemyAlive()) {
+						await new Promise(resolve => setTimeout(resolve, 10));
+					}
+				}
+			}),
+
 			fixInv: this.mkRule( `fix inventory`, async function() {
 				logic.inv.goTo();
 				logic.inv.applyAllBoostsToCube();
