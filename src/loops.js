@@ -90,7 +90,7 @@ class LoopRunner {
 		const {logic, io, loopRunner} = nguJs;
 
 		return {
-			test: async function(mytime) {
+			test: async function(mytime,firstrun=false) {
 				mytime = mytime.split(":");
 				var hr = parseInt(mytime[0]);
 				var min = parseInt(mytime[1]);
@@ -99,12 +99,23 @@ class LoopRunner {
 				var timeleft = ((hr * 60 * 60) + (min * 60) + (sec) - nguJs.gui.config.snipeAndBoost.preWait) * 1000;
 				console.log(timeleft);
 
-				var fn = async function() {
+				var fn = async function(firstrun) {
 					console.log(new Date());
 					console.log("running fn");
 					var cfg = nguJs.gui.config;
 					await loopRunner.stop();
-					await nguJs.loops.toLoadout(cfg.loadouts[cfg.snipeAndBoost.lo1].lo, cfg.loadouts[cfg.snipeAndBoost.lo1].digger, 250, {times:1});
+
+					logic.adv.goTo();
+					logic.getRidOfMouse();
+					await new Promise(resolve => setTimeout(resolve, 10));
+					logic.adv.setAtkIdle(true);
+
+					if (firstrun) {
+						await nguJs.loops.toLoadout(cfg.loadouts[cfg.snipeAndBoost.lof].lo, cfg.loadouts[cfg.snipeAndBoost.lof].digger, 250, {times:1});
+					} else {
+						await nguJs.loops.toLoadout(cfg.loadouts[cfg.snipeAndBoost.lo1].lo, cfg.loadouts[cfg.snipeAndBoost.lo1].digger, 250, {times:1});
+					}
+
 					await nguJs.loops.applyNgu(cfg["ngu"], 250, {times:1})
 					logic.inv.goTo();
 					console.log("waiting for drop");
@@ -116,18 +127,18 @@ class LoopRunner {
 					await nguJs.loops.toLoadout(cfg.loadouts[cfg.snipeAndBoost.lo2].lo, cfg.loadouts[cfg.snipeAndBoost.lo2].digger, 250, {times:1});
 					await wait(cfg.snipeAndBoost.wait2);
 					await nguJs.loops.applyNgu(cfg["ngu"], 250, {times:1})
-					logic.inv.goTo();
+					// logic.inv.goTo();
 					// nguJs.loops.applyBoosts(cfg.boost);
 					nguJs.loops.snipeAndBoost(cfg.boost, 10);
 					console.log("done");
 				}
-				var start = function() {
+				var start = function(firstrun) {
 					console.log("setting interval");
 					console.log(nguJs.gui.config.snipeAndBoost.intervalMin * 60 * 1000);
-					loopRunner.myinterval = setInterval(fn, nguJs.gui.config.snipeAndBoost.intervalMin * 60 * 1000);
-					fn();
+					loopRunner.myinterval = setInterval(fn, nguJs.gui.config.snipeAndBoost.intervalMin * 60 * 1000, false);
+					fn(firstrun);
 				}
-				loopRunner.mytimeout = setTimeout(start, timeleft);
+				loopRunner.mytimeout = setTimeout(start, timeleft, firstrun);
 				// var timeNow = new Date().getTime();
 			},
 
@@ -181,7 +192,7 @@ class LoopRunner {
 			itopodSnipe: this.mkRule( `itopod snipe`, async function(num=3, timeout=10000, delay=250) {
 				logic.adv.goTo();
 				logic.getRidOfMouse();
-				await new Promise(resolve => setTimeout(resolve, 500));
+				await new Promise(resolve => setTimeout(resolve, 200));
 				logic.adv.setAtkIdle(false);
 				for (let i = 0; i < num; i++) {
 					await new Promise(resolve => setTimeout(resolve, 800));
@@ -189,6 +200,7 @@ class LoopRunner {
 						await new Promise(resolve => setTimeout(resolve, 10));
 					}
 					nguJs.io.keyboard.press( Keyboard.keys.w );
+					await this.sync(true);
 				}
 				logic.adv.setAtkIdle(true);
 			}),

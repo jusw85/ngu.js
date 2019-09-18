@@ -85,10 +85,15 @@ const coords = {
 		pg1: rect(px (311, 95), px (372, 123)),
 		pg2: rect(px (375, 95), px (436, 123)),
 		pg3: rect(px (439, 95), px (500, 123)),
-		tl: px(340, 238),
-		bl: px(340, 428),
-		tr: px(656, 238),
-		br: px(656, 428),
+		tln: px(340, 238),
+		bln: px(340, 428),
+		trn: px(656, 238),
+		brn: px(656, 428),
+
+		tl: px(550, 188),
+		bl: px(550, 378),
+		tr: px(866, 188),
+		br: px(866, 378),
 	},
 	ngu: {
 		page: px(365, 115),
@@ -104,6 +109,19 @@ const coords = {
 };
 
 const gds = {
+	dropn: ["pg1", "tln"],
+	wandn: ["pg1", "trn"],
+	statn: ["pg1", "bln"],
+	advn: ["pg1", "brn"],
+	engun: ["pg2", "tln"],
+	mngun: ["pg2", "trn"],
+	ebrdn: ["pg2", "bln"],
+	mbrdn: ["pg2", "brn"],
+	ppn: ["pg3", "tln"],
+	dcn: ["pg3", "trn"],
+	bloodn: ["pg3", "bln"],
+	xpn: ["pg3", "brn"],
+
 	drop: ["pg1", "tl"],
 	wand: ["pg1", "tr"],
 	stat: ["pg1", "bl"],

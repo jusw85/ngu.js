@@ -1,3 +1,4 @@
+const {implementTyping} = require('./fixes.js');
 
 class Gui {
 	constructor( nguJs ) {
@@ -96,7 +97,7 @@ class Gui {
 				a.textContent = `Snipe and boost`;
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
-					nguJs.loops.snipeAndBoost(_this.config["boost"], 10);
+					nguJs.loops.snipeAndBoost(_this.config["boost"], _this.config.itopodSnipe.num);
 				}
 				a.style.display = `block`;
 			}
@@ -157,9 +158,12 @@ class Gui {
   "merge": [0,1,2,3,"weap"],
   "ngu": [0,0],
   "loadouts": {
-    "ngu": {"lo": 1, "digger": ["adv","engu","mngu","ebrd"]},
-    "drop": {"lo": 2, "digger": ["drop","adv","pp","dc"]},
-    "pp": {"lo": 3, "digger": ["adv","pp","dc","engu"]}	
+    "gold": {"lo": 1, "digger": ["drop","xp","pp","adv","ebrd"]},
+    "drop": {"lo": 2, "digger": ["drop","xp","pp","adv","ebrd"]},
+    "pp": {"lo": 3, "digger": ["xp","pp","dc","mngu","adv"]}
+  },
+  "itopodSnipe": {
+    "num": 10
   },
   "snipeAndBoost": {
     "intervalMin": 180,
@@ -167,7 +171,8 @@ class Gui {
     "wait1": 55,
     "wait2": 50,
     "lo1": "drop",
-    "lo2": "pp"
+    "lo2": "pp",
+    "lof": "gold"
   }
 }`;
 				ta.cols = 80;
@@ -176,6 +181,7 @@ class Gui {
 				ta.id = "config";
 				this.config = JSON.parse(ta.value);
 			}
+			implementTyping(textAreaA);
 
 			const loadoutDropdownA = document.createElement('select');
 			{
