@@ -126,7 +126,7 @@ class LoopRunner {
 
 					await nguJs.loops.toLoadout(cfg.loadouts[cfg.snipeAndBoost.lo2].lo, cfg.loadouts[cfg.snipeAndBoost.lo2].digger, 250, {times:1});
 					await wait(cfg.snipeAndBoost.wait2);
-					await nguJs.loops.applyNgu(cfg["ngu"], 250, {times:1})
+					await nguJs.loops.applyNgu(cfg["ngu"], 250, {times:1});
 					// logic.inv.goTo();
 					// nguJs.loops.applyBoosts(cfg.boost);
 					nguJs.loops.snipeAndBoost(cfg.boost, 10);
@@ -156,9 +156,22 @@ class LoopRunner {
 
 				logic.gd.goTo();
 				await wait(delay / 1000);
-				logic.gd.clearDiggers();
+				logic.gd.capDiggers();
+				// logic.gd.clearDiggers();
+				// await wait(delay / 1000);
+				// await logic.gd.activateDiggers(diggers);
+			}),
+
+			capAllMagic:this.mkRule( `cap all magic`, async function(delay=250, opts={}) {
+				logic.bm.goTo();
 				await wait(delay / 1000);
-				await logic.gd.activateDiggers(diggers);
+				await logic.bm.capAll();
+			}),
+
+			capWandoos:this.mkRule( `cap wandoos`, async function(delay=250, opts={}) {
+				logic.wand.goTo();
+				await wait(delay / 1000);
+				await logic.wand.capAll();
 			}),
 
 			applyBoosts: this.mkRule( `apply boosts`, async function(slots, timeout=10000, delay=250) {

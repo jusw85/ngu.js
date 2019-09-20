@@ -229,6 +229,28 @@ class Gui {
 				a.style.display = `block`;
 			}
 
+			const capAllMagicA = document.createElement('a');
+			{
+				const a = capAllMagicA;
+				a.textContent = `Cap All Magic`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loops.capAllMagic({times:1});
+				}
+				a.style.display = `block`;
+			}
+
+			const capWandoosA = document.createElement('a');
+			{
+				const a = capWandoosA;
+				a.textContent = `Cap Wandoos`;
+				a.href = `javascript:void(0)`;
+				a.onclick = function() {
+					nguJs.loops.capWandoos({times:1});
+				}
+				a.style.display = `block`;
+			}
+
 			controlDiv.appendChild(textAreaA);
 			controlDiv.appendChild(refreshConfigA);
 			controlDiv.appendChild(document.createElement("br"));
@@ -237,13 +259,15 @@ class Gui {
 			controlDiv.appendChild(document.createElement("br"));
 			controlDiv.appendChild(applyBoostA);
 			controlDiv.appendChild(applyMergeA);
-			controlDiv.appendChild(applyNguA);
 			controlDiv.appendChild(mergeAndBoostA);
 			controlDiv.appendChild(snipeAndBoostA);
 			controlDiv.appendChild(killBossOnlyA);
 			controlDiv.appendChild(document.createElement("br"));
 			controlDiv.appendChild(loadoutDropdownA);
 			controlDiv.appendChild(toloadoutA);
+			controlDiv.appendChild(applyNguA);
+			controlDiv.appendChild(capAllMagicA);
+			controlDiv.appendChild(capWandoosA);
 			controlDiv.appendChild(document.createElement("br"));
 			controlDiv.appendChild(stopIntervalA);
 			refreshLoadoutDropdown();

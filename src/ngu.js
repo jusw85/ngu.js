@@ -85,6 +85,7 @@ const coords = {
 		pg1: rect(px (311, 95), px (372, 123)),
 		pg2: rect(px (375, 95), px (436, 123)),
 		pg3: rect(px (439, 95), px (500, 123)),
+
 		tln: px(340, 238),
 		bln: px(340, 428),
 		trn: px(656, 238),
@@ -94,6 +95,8 @@ const coords = {
 		bl: px(550, 378),
 		tr: px(866, 188),
 		br: px(866, 378),
+
+		cap: px (800, 110),
 	},
 	ngu: {
 		page: px(365, 115),
@@ -105,7 +108,16 @@ const coords = {
 		minus(row) {
 			return px(this.firstminus.x, this.firstminus.y + (35 * row));
 		},
-	}
+	},
+	bm: {
+		cap(n) {
+			return px(570, 225 + (35 * n)); //0-7
+		},
+	},
+	wand: {
+		cape: px(625, 250),
+		capm: px(625, 350),
+	},
 };
 
 const gds = {

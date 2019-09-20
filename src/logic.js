@@ -13,6 +13,8 @@ class Logic {
 		this.adv = new AdvLogic( this );
 		this.gd = new GdLogic( this );
 		this.ngu = new NguLogic( this );
+		this.bm = new BloodLogic( this );
+		this.wand = new WandLogic( this );
 	}
 
 	getRidOfMouse() {
@@ -42,6 +44,35 @@ class FeatureLogic {
 	}
 
 	goTo() { return this.logic.toFeat( this.feature ); }
+}
+
+class WandLogic extends FeatureLogic {
+	constructor( logic ) {
+		super( feats.wand, logic );
+	}
+	async capAll( ) {
+		const {mouse} = nguJs.io;
+		mouse.move(coords.wand.cape);
+		mouse.click();
+		await wait(0.25);
+		mouse.move(coords.wand.capm);
+		mouse.click();
+		await wait(0.25);
+	}
+}
+
+class BloodLogic extends FeatureLogic {
+	constructor( logic ) {
+		super( feats.bm, logic );
+	}
+	async capAll( ) {
+		const {mouse} = nguJs.io;
+		for( let i = 0; i < 8; ++i ) {
+			mouse.move(coords.bm.cap(i));
+			mouse.click();
+			await wait(0.25);
+		}
+	}
 }
 
 class NguLogic extends FeatureLogic {
@@ -87,6 +118,11 @@ class GdLogic extends FeatureLogic {
 		for (const digger of diggers) {
 			await this.activateDigger(digger);
 		}
+	}
+	capDiggers() {
+		const {mouse} = nguJs.io;
+		mouse.move( coords.gd.cap );
+		mouse.click();
 	}
 }
 
