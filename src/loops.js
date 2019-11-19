@@ -126,6 +126,8 @@ class LoopRunner {
 
 					await nguJs.loops.toLoadout(cfg.loadouts[cfg.snipeAndBoost.lo2].lo, cfg.loadouts[cfg.snipeAndBoost.lo2].digger, 250, {times:1});
 					await wait(cfg.snipeAndBoost.wait2);
+					await nguJs.loops.capWandoos(250, {times:1});
+					await nguJs.loops.capAllMagic(250, {times:1});
 					await nguJs.loops.applyNgu(cfg["ngu"], 250, {times:1});
 					// logic.inv.goTo();
 					// nguJs.loops.applyBoosts(cfg.boost);

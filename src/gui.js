@@ -235,7 +235,7 @@ class Gui {
 				a.textContent = `Cap All Magic`;
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
-					nguJs.loops.capAllMagic({times:1});
+					nguJs.loops.capAllMagic(250, {times:1});
 				}
 				a.style.display = `block`;
 			}
@@ -246,7 +246,7 @@ class Gui {
 				a.textContent = `Cap Wandoos`;
 				a.href = `javascript:void(0)`;
 				a.onclick = function() {
-					nguJs.loops.capWandoos({times:1});
+					nguJs.loops.capWandoos(250, {times:1});
 				}
 				a.style.display = `block`;
 			}
