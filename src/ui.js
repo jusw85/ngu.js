@@ -1,64 +1,75 @@
 
 // UI for virtual input
-const ui = module.exports;
 
-const css = require('./index.scss'); // CSS (both for UI and GUI
+const ui = module.exports;
 
 class UI {
 	constructor() {
-		while( document.getElementById(`nguJsDiv`) ) {
-			console.warn( `Found an instance of NGU.js still installed, uhm...` );
-			document.getElementById(`nguJsDiv`).remove();
-		}
+		console.assert( ! document.getElementById(`nguJsDiv`) );
 
 		const div = this.div = document.createElement(`div`);
 		div.id = `nguJsDiv`;
 		document.body.appendChild( div );
-
-		// events received on our widget shouldn't propagate to the canvas beneath
-		[`mousemove`, `mousedown`, `mouseup`, `keydown`, `keypress`, `keyup`].forEach( (eventName)=>{
-			div.addEventListener( eventName, (e)=>{ e.stopPropagation(); });
-		});
-
-		// applying our stylesheet
-		const style = this.style = document.createElement(`style`);
-		style.type = 'text/css';
-		style.appendChild( document.createTextNode(css) );
-		div.appendChild( style ); // NOTE(peoro): a <style> in a <div> is not standard, but it works
 	}
 	destroy() {
 		this.div.remove();
 	}
 }
 
-class UIElement {
-	constructor( className='point' ) {
-		this.div = document.createElement(`div`);
-		this.restyle( className );
+class Point {
+	constructor( style ) {
+		this.point = document.createElement(`div`);
+		this.restyle( style );
 	}
-	restyle( className ) {
-		this.div.className = className;
-	}
-	show( ui ) { ui.div.appendChild(this.div); }
-	hide() { this.div.remove(); }
-}
+	restyle( {size=10, color=`green`}={} ) {
+		// setting point style
+		const style = this.point.style;
+		style.width = `${size}px`;
+		style.height = `${size}px`;
+		style.boxSizing = `border-box`;
+		style.border = `solid ${color} 1px`;
+		style.borderRadius = `${size/2}px`;
+		style.boxShadow = `inset 0 0 ${size/2}px ${color}, 0 0 ${size/2}px ${color}`;
+		style.padding = `0`;
+		style.margin = `-${size/2}px`;
 
-class Point extends UIElement {
-	constructor( className='point' ) {
-		super( className );
+		style.position = `absolute`;
+		style.top = 0;
+		style.left = 0;
+		style.zIndex = 1000;
+		style.pointerEvents = `none`;
 	}
+	show( ui ) { ui.div.appendChild(this.point); }
+	hide() { this.point.remove(); }
 	move( {x,y} ) {
-		const style = this.div.style;
+		const style = this.point.style;
 		style.left = `${x}px`;
 		style.top = `${y}px`;
 	}
 }
-class Rect extends UIElement {
-	constructor( className='rect' ) {
-		super( className );
+class Rect {
+	constructor( style ) {
+		this.point = document.createElement(`div`);
+		this.restyle( style );
 	}
+	restyle( {size=10, color=`green`}={} ) {
+		// setting point style
+		const style = this.point.style;
+		style.width = `${size}px`;
+		style.height = `${size}px`;
+		style.boxSizing = `border-box`;
+		style.border = `solid ${color} 1px`;
+		style.boxShadow = `inset 0 0 5px ${color}, 0 0 5px ${color}`;
+		style.padding = `0`;
+
+		style.position = `absolute`;
+		style.zIndex = 1000;
+		style.pointerEvents = `none`;
+	}
+	show( ui ) { ui.div.appendChild(this.point); }
+	hide() { this.point.remove(); }
 	set( rect ) {
-		const style = this.div.style;
+		const style = this.point.style;
 		style.left = `${rect.left}px`;
 		style.top = `${rect.top}px`;
 		style.width = `${rect.width}px`;
@@ -66,30 +77,8 @@ class Rect extends UIElement {
 	}
 }
 
-
-// adding debug methods to `util.Pixel` and `util.Rect`
-const util = require('./util.js');
-
-util.Pixel.prototype.debug = async function( s=2 ) {
-	const el = new Point('debug-point');
-	el.move( this );
-	el.show( nguJs.ui );
-	await util.wait( s );
-	el.hide();
-};
-
-util.Rect.prototype.debug = async function( s=2 ) {
-	const el = new Rect('debug-rect');
-	el.set( this );
-	el.show( nguJs.ui );
-	await util.wait( s );
-	el.hide();
-};
-
-
 Object.assign( ui, {
 	UI,
-	UIElement,
 	Point,
 	Rect,
 });

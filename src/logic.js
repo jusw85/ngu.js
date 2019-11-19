@@ -4,8 +4,7 @@
 const {px} = require('./util.js');
 const {seq} = require('./util.js');
 const {Keyboard} = require('./io.js');
-const ngu = require('./ngu.js');
-const assets = require('./assets.js');
+const {coords, feats, colors} = require('./ngu.js');
 
 class Logic {
 	constructor() {
@@ -17,6 +16,12 @@ class Logic {
 		return nguJs.io.mouse.move( px(-1000,-1000) );
 	}
 
+	toFeat( feature ) {
+		const {mouse} = nguJs.io;
+		mouse.move( coords.feat.buttons[feature].center );
+		mouse.click();
+	}
+
 	queryPixel( pixelColor, baseObj ) {
 		const base = baseObj ?
 			baseObj.rect.topLeft :
@@ -24,12 +29,6 @@ class Logic {
 
 		const color = nguJs.io.framebuffer.getPixel( base.clone().add(pixelColor.offset) );
 		return pixelColor.get( color );
-	}
-
-	click( widget ) {
-		const {mouse} = nguJs.io;
-		mouse.move( widget.center );
-		return mouse.click();
 	}
 }
 
@@ -39,130 +38,70 @@ class FeatureLogic {
 		this.logic = logic;
 	}
 
-	// goTo() { return this.logic.toFeat( this.feature ); }
-	goTo() { nguJs.io.mouse.move( this.feature.rect.center ); return nguJs.io.mouse.click(); }
+	goTo() { return this.logic.toFeat( this.feature ); }
 }
 
 class InvLogic extends FeatureLogic {
 	constructor( logic ) {
-		super( ngu.features.buttons.inv, logic );
+		super( feats.inv, logic );
 	}
 	merge() { return nguJs.io.keyboard.press( Keyboard.keys.d ); }
 	mergeSlot( slot ) {
 		const {mouse} = nguJs.io;
-		mouse.move( slot.center );
+		mouse.move( slot.px );
 		this.merge();
+	}
+	mergeAllSlots() {
+		for( let slot of coords.inv.pageSlots ) {
+			this.mergeSlot( slot );
+		};
 	}
 	//mergeEquip
 	//mergeAll
 	applyAllBoostsToCube() {
 		const {mouse} = nguJs.io;
-		mouse.move( ngu.inv.cube.center );
+		mouse.move( coords.inv.equip.cube.center );
 		mouse.click( 2 );
-	}
-
-	getInvInfo() {
-		return ngu.inv.inventory.map( (slot)=>{
-			// TODO: move this logic into `ItemSlot` directly....
-			const imgData = new ImageView( nguJs.io.framebuffer, slot.innerRect ).toImageData();
-			const item = assets.items.detect( imgData.data );
-			const state = slot.stateDetector.detect();
-			return Object.assign( {item}, state );
-		});
 	}
 }
 
 
 class AdvLogic extends FeatureLogic {
 	constructor( logic ) {
-		super( ngu.features.buttons.adv, logic );
+		super( feats.adv, logic );
 	}
 
 	getMovesInfo() {
+		const {logic} = this;
+		const {moveActive, moveState} = colors.adv;
+		const moveObj = coords.adv.moves.move;
+
 		const result = {};
 
-		const {moves} = ngu.adv;
-		for( let name in moves ) {
-			const move = moves[name];
-			const active = move.activeDetector.detect();
-			const state = move.stateDetector.detect();
+		for( let name in moveObj ) {
+			const move = moveObj[name];
+			const active = logic.queryPixel( moveActive, move );
+			const state = logic.queryPixel( moveState, move );
 			result[name] = {active, state, ready:(state===`ready` && !active) };
 		}
 
 		return result;
 	}
-	isEnemyAlive() { return ngu.adv.enemy.hpBar.getStateDetectorForRatio(0).detect(); }
-	isBoss() { return ngu.adv.bossDetector.detect(); }
+	isEnemyAlive() { return this.logic.queryPixel( colors.adv.enemyAlive ); }
+	isBoss() { return this.logic.queryPixel( colors.adv.boss ); }
 
 	hpRatioIsAtLeast( ratio ) {
-		return ngu.adv.self.hpBar.getStateDetectorForRatio(ratio).detect();
-	}
-
-	idle( on=true ) {
-		const moveInfo = this.getMovesInfo();
-		if( moveInfo.idle.active !== on ) {
-			this.attack( ngu.adv.moves.idle );
-		}
-	}
-
-	chooseMove() {
-		const {logic} = this;
-		const {moves} = ngu.adv;
-		const moveInfo = logic.adv.getMovesInfo();
-
-		if( moveInfo.idle.active ) {
-			console.log( `disabling idle attack` );
-			return moves.idle;
-		}
-
-		const reallyNeedHeal = ! logic.adv.hpRatioIsAtLeast( .5 );
-		if( reallyNeedHeal ) {
-			console.log( `need urgent heal!` );
-			if( moveInfo.defBuff.ready ) { return moves.defBuff; }
-			if( moveInfo.heal.ready ) { return moves.heal; }
-			if( moveInfo.regen.ready ) { return moves.regen; }
-		}
-
-		if( ! this.isEnemyAlive() ) {
-			const needHeal = ! logic.adv.hpRatioIsAtLeast( .8 );
-			if( needHeal ) {
-				if( moveInfo.heal.ready ) { return moves.heal; }
-				if( moveInfo.regen.ready ) { return moves.regen; }
-			}
-			if( moveInfo.parry.ready ) { return moves.parry; }
-			return;
-		}
-
-		// actual fighting
-		const fullHP = logic.adv.hpRatioIsAtLeast( 1 ); // if we're in a zone where enemies are easy to kill, let's not waste time charging up
-		if( !fullHP ) {
-			if( moveInfo.paralyze.ready ) { return moves.paralyze; }
-			if( moveInfo.block.ready ) { return moves.block; }
-		}
-		if( !fullHP && moveInfo.ultimate.ready && (moveInfo.charge.ready || moveInfo.charge.active) ) {
-			if( moveInfo.offBuff.ready ) { return moves.offBuff; }
-			if( moveInfo.ultBuff.ready ) { return moves.ultBuff; }
-			if( moveInfo.charge.ready ) { return moves.charge; }
-		}
-		if( moveInfo.ultimate.ready ) { return moves.ultimate; }
-		if( moveInfo.piercing.ready ) { return moves.piercing; }
-		if( moveInfo.strong.ready ) { return moves.strong; }
-		if( moveInfo.regular.ready ) { return moves.regular; }
-
-		// console.log( `no attack ready` );
+		return this.logic.queryPixel( colors.adv.ownHpRatioAtLeast(ratio) );
 	}
 
 	prevArea() { return nguJs.io.keyboard.press( Keyboard.keys.leftArrow ); }
 	nextArea() { return nguJs.io.keyboard.press( Keyboard.keys.rightArrow ); }
 	attack( move ) {
-		const key = Keyboard.keys[move.key];
-		return nguJs.io.keyboard.press( key );
-
-		// the following also works, but it's slower (and creates popups that hide move status
-		//const {mouse} = nguJs.io;
-		//mouse.move( move.center );
-		//mouse.click();
-		//this.logic.getRidOfMouse();
+		// TODO(peoro): let's use key shortcuts instead of moving mouse back and forth D:
+		const {mouse} = nguJs.io;
+		mouse.move( move.px );
+		mouse.click();
+		this.logic.getRidOfMouse();
 	}
 }
 

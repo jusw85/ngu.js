@@ -8,6 +8,10 @@ const loops = require('./loops.js');
 const gui = require('./gui.js');
 const nguJs = require('./ngujs.js');
 
+Object.assign( module.exports = {
+	util, ui, io, ngu, logic, loops, gui, nguJs,
+});
+
 async function main() {
 	// uninstalling previous version of NGU.js
 	if( window.nguJs ) {
@@ -31,6 +35,7 @@ async function main() {
 
 	// instantiating NGU.js
 	window.nguJs = new nguJs.NguJs( gameCanvas );
+	window.nguJsLib = module.exports;
 
 	// printing a how-to message
 	{
@@ -43,8 +48,8 @@ async function main() {
 var {coords, colors} = nguJsLib.ngu;`);
 		space();
 		comment(`Draw a point or a rect for debugging:`);
-		code(`coords.inv.slot(5,2).debug();
-coords.inv.slot(5,2).center.debug();
+		code(`nguJs.debug( coords.inv.slot(5,2) );
+nguJs.debug( coords.inv.slot(5,2).center );
 coords.inv.slot(5,2).toString();`);
 		space();
 		comment(`Run some small pieces of logic:`);
@@ -61,10 +66,6 @@ nguJs.logic.inv.applyAllBoostsToCube();`);
 		code(`nguJs.destroy();`);
 	}
 }
-
-window.nguJsLib = Object.assign( module.exports, {
-	main, util, ui, io, ngu, logic, loops, gui, nguJs,
-});
 
 if( module === require.main ) {
 	main();

@@ -2,7 +2,6 @@
 // generic IO functions (not specific to NGU or any game)
 
 const {px} = require('./util.js');
-const {PixelDetector} = require('./color.js');
 const {Point, Rect} = require('./ui.js');
 
 
@@ -150,7 +149,7 @@ class Mouse {
 		this.p = px( 0, 0 );
 
 		if( ui ) {
-			const vMouse = new Point( 'vMouse' );
+			const vMouse = new Point( {color:`red`} );
 			vMouse.show( ui );
 			this.vMouse = vMouse;
 		}
@@ -215,18 +214,12 @@ class Keyboard {
 	}
 };
 Keyboard.keys = {
+	d: {code:'KeyD', key:'d', keyCode:68},
 	leftArrow: {keyCode:37},
 	upArrow: {keyCode:38},
 	rightArrow: {keyCode:39},
 	downArrow: {keyCode:40},
 };
-// adding all the letters to `Keyboard.keys`
-for( let keyCode = 65; keyCode < 91; ++keyCode ) {
-	const char = String.fromCharCode( keyCode );
-	const key = char.toLowerCase();
-	const code = `Key${char}`;
-	Keyboard.keys[key] = {code, key, keyCode};
-}
 
 
 // output part: reading information from the canvas
@@ -237,44 +230,25 @@ class Framebuffer {
 	constructor( io, canvas ) {
 		console.assert( canvas.width === W && canvas.height === H, `Framebuffer is currently meant to only work with ${W}x${H} canvases (canvas is ${canvas.width}x${canvas.height})` );
 
-		this.io = io;
-		const gl = this.gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
-
 		const buffer = new ArrayBuffer( 4*W*H );
+
+		this.io = io;
+		const gl = this.gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
 		this.dataView = new DataView( buffer );
 
-		// recapturing the framebuffer image every frame
 		const u8arr = new Uint8Array( buffer );
 		io.eachFrame( ()=>{
 			gl.readPixels( 0, 0, W, H, gl.RGBA, gl.UNSIGNED_BYTE, u8arr );
 		});
 	}
 
-	get size() { return px(W, H); }
-	get rect() { return Rect.fromTLSize( px(0,0), this.size() ); }
-
-	// overriding `getOffset`, since top and bottom in the framebuffer is inverted...
-	getOffset( p ) {
-		return p.x + (H-p.y-1)*W;
-	}
 	getPixel( p ) {
-		console.assert( p.isInteger(), `${p} not an integer size...` );
-		return this.dataView.getUint32( this.getOffset(p)*4, false );
+		console.assert( p.hasOwnProperty('x') && p.hasOwnProperty('y'), `${p} not a px...` );
+		console.assert( p.every(Number.isInteger), `${p} not integer` );
+		const offset = p.x + (H-p.y-1)*W;
+		return this.dataView.getUint32( offset*4, false );
 	}
 }
-
-
-// adding a `detect :: Framebuffer -> value` method to `PixelDetector`
-PixelDetector.prototype.detect = function( fb=nguJs.io.framebuffer ) {
-	const color = fb.getPixel( this.offset.clone().round() );
-	return this.colorMap.get( color );
-};
-PixelDetector.prototype.debug = function( fb=nguJs.io.framebuffer ) {
-	const color = fb.getPixel( this.offset.clone().round() );
-	console.log( `${this.offset}: #${color.toString(16)} ➜ ${this.colorMap.get(color)}` );
-	return this.offset.debug();
-};
-
 
 module.exports = {
 	mkEvent,
