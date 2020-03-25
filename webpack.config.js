@@ -1,6 +1,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const fs  = require('fs');
 
 const config = {
 	entry: {
@@ -11,6 +12,10 @@ const config = {
 		filename: 'ngu.js',
 	},
 	devServer: {
+		host: '0.0.0.0',
+		https: true,
+		key: fs.readFileSync('./localkey.pem'),
+		cert: fs.readFileSync('./localcert.pem'),
 		port: 8042,
 		contentBase: path.resolve(__dirname, 'dist'),
 	},
